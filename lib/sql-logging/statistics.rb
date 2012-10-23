@@ -12,9 +12,11 @@ module SqlLogging
     @@show_sql_backtrace = true
     @@show_top_sql_queries = :total_time
     @@top_sql_queries = 10
+    @@backtrace_cleaner = Rails.backtrace_cleaner.dup
+    @@backtrace_cleaner.add_silencer { |line| line =~ %r{sql-logging/lib} }
   
-    cattr_accessor :show_sql_backtrace, :top_sql_queries
-  
+    cattr_accessor :show_sql_backtrace, :top_sql_queries, :backtrace_cleaner
+
     def self.show_top_sql_queries
       @@show_top_sql_queries
     end
@@ -35,8 +37,6 @@ module SqlLogging
       @@top_queries = {}
     end
   
-    @@backtrace_cleaner = Rails.backtrace_cleaner.dup
-    @@backtrace_cleaner.add_silencer { |line| line =~ %r{sql-logging/lib} }
   
     def self.record_query(sql, name, msec, result)
       unless name.blank? || name =~ / Columns$/ || name == :skip_logging
