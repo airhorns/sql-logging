@@ -5,10 +5,11 @@ module SqlLogging
     DEFAULTS = {
       show_sql_backtrace: true,
       show_top_sql_queries: :total_time,
+      query_extensions: [],
       show_query_stats: true,
       top_sql_queries: 10,
       backtrace_cleaner: nil,
-      logger: nil
+      logger: nil,
     }.freeze
 
     attr_writer(*DEFAULTS.keys - [:show_top_sql_queries])
@@ -45,9 +46,9 @@ module SqlLogging
     def validate_allowed(allowed_values, value)
       return if allowed_values.include?(value)
       method_match = /`(.*)='/.match(caller(1, 1)[0])
-      method_name = method_match ? method_match[1] : 'Argument'
+      method_name = method_match ? method_match[1] : "Argument"
       raise ArgumentError, "#{method_name} must be one of: " \
-                           "#{allowed_values.map(&:inspect).join(', ')}"
+                           "#{allowed_values.map(&:inspect).join(", ")}"
     end
   end
 end
