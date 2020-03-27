@@ -5,6 +5,7 @@ module SqlLogging
     DEFAULTS = {
       show_sql_backtrace: true,
       show_top_sql_queries: :total_time,
+      show_query_stats: true,
       top_sql_queries: 10,
       backtrace_cleaner: nil,
       logger: nil

@@ -32,6 +32,7 @@ module SqlLogging
 
       def_delegators :configuration, :show_sql_backtrace, :top_sql_queries,
                      :show_top_sql_queries, :backtrace_cleaner,
+                     :show_query_stats, :show_query_stats=,
                      :show_top_sql_queries=, :show_sql_backtrace=,
                      :top_sql_queries=, :logger
 
@@ -54,11 +55,12 @@ module SqlLogging
         backtrace = backtrace_cleaner.clean(caller).join("\n    ")
         add_query_to_top_queries(sql, name, backtrace, msec, ntuples, bytes)
 
-        logger.debug "    #{ntuples} rows, #{bytes} bytes"
+        logger.debug "    #{ntuples} rows, #{bytes} bytes" if show_query_stats
         logger.debug "    #{backtrace}" if show_sql_backtrace
       end
 
       def log_report
+        return unless show_query_stats
         logger.debug "SQL Logging: #{data.queries} statements executed" \
           ", returning #{data.bytes} bytes"
 
